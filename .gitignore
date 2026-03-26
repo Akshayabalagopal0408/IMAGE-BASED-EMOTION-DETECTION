@@ -1,0 +1,6 @@
+# Ignore datasets and large archives
+dataset/
+Masked-fer2013/
+raw_dataset/
+*.zip
+__pycache__/
