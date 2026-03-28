@@ -4,3 +4,6 @@ Masked-fer2013/
 raw_dataset/
 *.zip
 __pycache__/
+
+# Ignore webcam demo screenshots
+results/webcam_screenshot_*.png
