@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as mpatches
 import cv2
+import random
 import tensorflow as tf
 from pathlib import Path
 
@@ -79,8 +80,8 @@ def predict(model, img_bgr):
 # ─────────────────────────────────────────
 # STEP 1 — Sample prediction grid
 # ─────────────────────────────────────────
-def generate_prediction_grid(model, n_per_class=4):
-    print("\n[1/3] Generating prediction sample grid...")
+def generate_prediction_grid(model, n_per_class=4, filename='prediction_samples.png'):
+    print(f"\n[1/3] Generating prediction sample grid ({filename})...")
 
     fig = plt.figure(figsize=(n_per_class * 2.5, len(EMOTIONS) * 2.8))
     fig.suptitle('Sample Predictions — Masked Face Emotion Detection',
@@ -107,7 +108,12 @@ def generate_prediction_grid(model, n_per_class=4):
         folder = Path(DATASET_DIR) / 'test' / emotion
         if not folder.exists():
             folder = Path(DATASET_DIR) / 'val' / emotion
-        images = list(folder.glob('*.*'))[:n_per_class] if folder.exists() else []
+            
+        all_images = list(folder.glob('*.*')) if folder.exists() else []
+        if len(all_images) > n_per_class:
+            images = random.sample(all_images, n_per_class)
+        else:
+            images = all_images
 
         for col in range(n_per_class):
             ax = fig.add_subplot(gs[row, col + 1])
@@ -135,7 +141,7 @@ def generate_prediction_grid(model, n_per_class=4):
                              pad=2, fontweight='bold')
 
     plt.tight_layout()
-    path = os.path.join(RESULTS_DIR, 'prediction_samples.png')
+    path = os.path.join(RESULTS_DIR, filename)
     plt.savefig(path, dpi=150, bbox_inches='tight')
     plt.close()
     print(f"  Saved: {path}")
@@ -379,7 +385,9 @@ if __name__ == '__main__':
 
     model = load_model()
 
-    generate_prediction_grid(model, n_per_class=4)
+    generate_prediction_grid(model, n_per_class=4, filename='prediction_samples_1.png')
+    generate_prediction_grid(model, n_per_class=4, filename='prediction_samples_2.png')
+    generate_prediction_grid(model, n_per_class=4, filename='prediction_samples_3.png')
     generate_summary_report(model)
 
     if args.webcam:
